@@ -2,6 +2,8 @@
 
 A bot to post when all your favorite villager's birthdays are written in Rust.
 
+![](https://cdn.discordapp.com/attachments/376971848555954187/689157291643240492/unknown.png)
+
 ## Prerequisites
 
 * Must have `cargo` installed
