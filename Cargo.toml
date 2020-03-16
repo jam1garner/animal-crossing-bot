@@ -1,0 +1,16 @@
+[package]
+name = "animal-crossing-bot"
+version = "0.1.0"
+authors = ["jam1garner <jam1.mcleod@hotmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+egg-mode = { git = "https://github.com/QuietMisdreavus/twitter-rs" }
+tokio = { version = "0.2", features = ["macros", "time", "fs"] }
+lazy_static = "1.4"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+chrono = "0.4"
+image = "0.23"
