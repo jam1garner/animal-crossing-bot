@@ -119,7 +119,7 @@ impl<'a> Birthdays<'a> {
 pub enum StarSign {
     Capricorn,
     Aquarius,
-    Pices,
+    Pisces,
     Aries,
     Taurus,
     Gemini,
@@ -137,8 +137,8 @@ impl<D: Datelike> From<D> for StarSign {
             (1, day) if day <= 20 => Self::Capricorn,
             (1, _) => Self::Aquarius,
             (2, day) if day <= 19 => Self::Aquarius,
-            (2, _) => Self::Pices,
-            (3, day) if day <= 20 => Self::Pices,
+            (2, _) => Self::Pisces,
+            (3, day) if day <= 20 => Self::Pisces,
             (3, _) => Self::Aries,
             (4, day) if day <= 20 => Self::Aries,
             (4, _) => Self::Taurus,
@@ -194,7 +194,7 @@ impl fmt::Display for StarSign {
         write!(f, "{}", match self {
             Self::Capricorn => "Capricorn",
             Self::Aquarius => "Aquarius",
-            Self::Pices => "Pices",
+            Self::Pisces => "Pisces",
             Self::Aries => "Aries",
             Self::Taurus => "Taurus",
             Self::Gemini => "Gemini",
