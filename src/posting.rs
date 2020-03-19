@@ -3,13 +3,13 @@ use chrono::{NaiveDate, Utc};
 use tokio::join;
 use std::future::Future;
 
-mod data;
-mod image_editing;
+pub mod data;
+pub mod image_editing;
 
 pub(crate) use data::load_data;
 
-async fn upload(token: &Token, data: Option<impl Future<Output = Vec<u8>>>) -> u64 {
-    let image = image_editing::add_background(data.unwrap().await).await;
+async fn upload(token: &Token, data: Vec<Vec<u8>>) -> u64 {
+    let image = image_editing::add_background(data).await;
 
     join!(
         UploadBuilder::new(
@@ -20,36 +20,29 @@ async fn upload(token: &Token, data: Option<impl Future<Output = Vec<u8>>>) -> u
     ).0.unwrap().id
 }
 
-async fn upload_all(t: &Token, mut futures: Vec<impl Future<Output = Vec<u8>>>) -> Vec<u64> {
-    match futures.len() {
-        0 => vec![],
-        1 => vec![upload(t, futures.pop()).await],
+async fn upload_all(t: &Token, mut futures: Vec<impl Future<Output = Vec<u8>>>) -> Option<u64> {
+    Some(match futures.len() {
+        0 => return None,
+        1 => upload(t, vec![futures.pop().unwrap().await]).await,
         2 => {
-            let (b, a) = (futures.pop(), futures.pop());
-            let (a, b) = join!(upload(t, a), upload(t, b));
-            vec![a, b]
+            let (b, a) = join!(futures.pop().unwrap(), futures.pop().unwrap());
+            upload(t, vec![a, b]).await
         }
         3 => {
-            let (c, b, a) = (futures.pop(), futures.pop(), futures.pop());
-            let (a, b, c) = join!(
-                upload(t, a),
-                upload(t, b),
-                upload(t, c)
-            );
-            vec![a, b, c]
+            let (c, b, a) = join!(futures.pop().unwrap(), futures.pop().unwrap(), futures.pop().unwrap());
+            upload(t, vec![a, b, c]).await
         }
         4 => {
-            let (d, c, b, a) = (futures.pop(), futures.pop(), futures.pop(), futures.pop());
-            let (a, b, c, d) = join!(
-                upload(t, a),
-                upload(t, b),
-                upload(t, c),
-                upload(t, d),
+            let (d, c, b, a) = join!(
+                futures.pop().unwrap(),
+                futures.pop().unwrap(),
+                futures.pop().unwrap(),
+                futures.pop().unwrap()
             );
-            vec![a, b, c, d]
+            upload(t, vec![a, b, c, d]).await
         }
         _ => unreachable!()
-    }
+    })
 }
 
 pub async fn get_tweet(token: &Token, date: NaiveDate) -> Option<DraftTweet<'_>> {
@@ -99,12 +92,12 @@ pub async fn get_tweet(token: &Token, date: NaiveDate) -> Option<DraftTweet<'_>>
             .map(data::Birthday::image)
             .collect();
 
-    let media_ids = upload_all(token, image_futures).await;
+    let media_id = upload_all(token, image_futures).await.unwrap();
 
     if !todays_birthdays.is_empty() {
         Some(
             DraftTweet::new(message)
-                .media_ids(&media_ids)
+                .media_ids(&[media_id])
         )
     } else {
         None

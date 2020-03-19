@@ -6,16 +6,18 @@ pub fn current_datetime_edt() -> DateTime<FixedOffset> {
     edt.timestamp(Utc::now().timestamp(), 0)
 }
 
+const HOUR: u32 = 10;
+
 pub fn time_to_wait_for() -> DateTime<FixedOffset> {
     let now = current_datetime_edt();
-    let day_to_wait_for = if now.hour() > 9 {
+    let day_to_wait_for = if now.hour() >= HOUR {
         now + Duration::days(1)
     } else {
         now
     };
     
     day_to_wait_for
-        .with_hour(9).unwrap()
+        .with_hour(HOUR).unwrap()
         .with_minute(0).unwrap()
         .with_second(0).unwrap()
 }

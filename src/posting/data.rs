@@ -176,7 +176,7 @@ impl Gender {
     pub fn pronouns(&self) -> (&'static str, &'static str, &'static str) {
         match self {
             Self::Male => ("He", "Him", "His"),
-            Self::Female => ("She", "Her", "Hers"),
+            Self::Female => ("She", "Her", "Her"),
             _ => ("They", "Them", "Theirs")
         }
     }

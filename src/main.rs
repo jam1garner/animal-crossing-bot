@@ -44,6 +44,23 @@ async fn main() {
         panic!("Not signed into the right account!");
     }*/
 
+    /*let date = waiting::time_to_wait_for().date().naive_local();
+    
+    let birthdays = posting::data::get_birthdays().await;
+
+    let todays_birthdays = birthdays.query_by_date(date);
+
+    let mut image_futures: Vec<_> = 
+        todays_birthdays
+            .iter()
+            .map(posting::data::Birthday::image)
+            .collect();
+
+    let img2 = image_futures.pop().unwrap().await;
+    let img1 = image_futures.pop().unwrap().await;
+
+    std::fs::write("test_out.png", posting::image_editing::add_background(vec![img1, img2]).await);*/
+
     let token = twitter::Token::Access {
         consumer: twitter::KeyPair::new(
             env::var("API_KEY").unwrap(),
